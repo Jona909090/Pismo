@@ -1,1 +1,278 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  overflow-x: hidden;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(180,30,30,0.55) 0%, rgba(90,10,10,0.35) 30%, rgba(20,0,0,0.9) 65%, #0a0000 100%),
+    repeating-radial-gradient(circle at 20% 80%, rgba(255,255,255,0.02) 0, rgba(255,255,255,0.02) 1px, transparent 2px, transparent 4px),
+    #0a0000;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
 
+h1 {
+  color: #f5e6e6;
+  margin-bottom: 40px;
+  font-size: 2rem;
+  text-shadow: 0 0 12px rgba(255,80,80,0.4);
+}
+
+.tagline {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  color: #e8b6b2;
+  text-shadow: 0 0 14px rgba(255,90,90,0.5), 0 0 30px rgba(255,60,60,0.25);
+  margin-bottom: 45px;
+  text-align: center;
+  max-width: 90vw;
+  padding: 0 20px;
+}
+
+.scene {
+  position: relative;
+  width: min(320px, 90vw);
+  height: 640px;
+  perspective: 1000px;
+}
+
+/* ---------- KOVERTA (zatvorena sa sve 4 strane) ---------- */
+.envelope {
+  position: absolute;
+  width: 100%;
+  height: 200px;
+  bottom: 0;
+  border-radius: 14px;
+  box-shadow:
+    0 0 50px rgba(255,60,60,0.35),
+    0 0 90px rgba(255,30,30,0.15),
+    0 14px 30px rgba(0,0,0,0.6);
+}
+
+/* osnovno tijelo koverte - popunjava cijeli pravokutnik */
+.envelope-body {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #9c1418, #5e0a0d);
+  border-radius: 14px;
+  z-index: 2;
+}
+
+/* donji i bocni preklopi (uvijek vidljivi, cine "V" oblik) */
+.flap-side {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #7a0f12, #45070a);
+  clip-path: polygon(0% 100%, 50% 32%, 100% 100%);
+  border-radius: 0 0 14px 14px;
+  z-index: 3;
+}
+
+/* gornji preklop - ovaj se otvara */
+.flap-top {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, #d4494a 0%, #a51d20 55%, #7a1013 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 55%);
+  border-radius: 14px 14px 0 0;
+  transform-origin: top center;
+  transition: transform 0.7s ease, z-index 0.7s;
+  z-index: 5;
+  backface-visibility: hidden;
+}
+
+.flap-top::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0% 0%, 100% 0%, 50% 55%);
+  background: linear-gradient(120deg, rgba(255,255,255,0.28), transparent 55%);
+}
+
+.envelope.open .flap-top {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+/* ---------- PISMO ---------- */
+.clip {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.scene.open .clip {
+  overflow: visible;
+  z-index: 10;
+}
+
+.letter {
+  position: absolute;
+  left: 50%;
+  bottom: 25px;
+  width: 100%;
+  background: #fffaf5;
+  border-radius: 6px;
+  box-shadow: none;
+  transform: translate(-50%, 0) scale(0.7) rotate(-10deg);
+  opacity: 0;
+  z-index: 0;
+  padding: 22px 26px;
+  text-align: left;
+  font-family: 'Brush Script MT', cursive;
+  color: #444;
+}
+
+.letter.opening {
+  animation: letterOpen 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  z-index: 6;
+}
+
+.letter.open {
+  bottom: 60px;
+  transform: translate(-50%, 0) scale(1) rotate(0deg);
+  opacity: 1;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+  z-index: 6;
+}
+
+.letter.closing {
+  animation: letterClose 0.6s ease forwards;
+  z-index: 6;
+}
+
+@keyframes letterOpen {
+  0% {
+    bottom: 25px;
+    transform: translate(-50%, 0) scale(0.7) rotate(-10deg);
+    opacity: 0;
+    box-shadow: none;
+  }
+  45% {
+    bottom: 115px;
+    transform: translate(-50%, 0) scale(0.9) rotate(9deg);
+    opacity: 1;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  }
+  75% {
+    bottom: 45px;
+    transform: translate(-50%, 0) scale(1.02) rotate(-3deg);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+  100% {
+    bottom: 60px;
+    transform: translate(-50%, 0) scale(1) rotate(0deg);
+    opacity: 1;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+  }
+}
+
+@keyframes letterClose {
+  0% {
+    bottom: 60px;
+    transform: translate(-50%, 0) scale(1) rotate(0deg);
+    opacity: 1;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+  }
+  100% {
+    bottom: 25px;
+    transform: translate(-50%, 0) scale(0.7) rotate(-10deg);
+    opacity: 0;
+    box-shadow: none;
+  }
+}
+
+.letter p {
+  margin: 0 0 12px 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.heart {
+  width: 40px;
+  height: 40px;
+  margin: 10px auto;
+  position: relative;
+  transform: scale(0);
+  transition: transform 0.5s ease 0.45s;
+}
+
+.scene.open .heart {
+  transform: scale(1);
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 34px;
+  background: #ff4d6d;
+  border-radius: 22px 22px 0 0;
+  top: 0;
+}
+
+.heart::before {
+  left: 20px;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+
+.heart::after {
+  left: -2px;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
+.signature {
+  text-align: right;
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.8rem;
+  color: #d94b6b;
+  margin: 6px 4px 0 0;
+}
+
+/* ---------- GUMBI ---------- */
+.buttons {
+  margin-top: 40px;
+  display: flex;
+  gap: 16px;
+}
+
+button {
+  padding: 12px 28px;
+  border: 2px solid #c0453f;
+  color: #e08a85;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:active {
+  background: #c0453f;
+  color: white;
+}
+
+@media (hover: hover) {
+  button:hover {
+    background: #c0453f;
+    color: white;
+  }
+}
